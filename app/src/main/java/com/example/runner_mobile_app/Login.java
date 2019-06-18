@@ -21,7 +21,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class Login extends AppCompatActivity {
     public AsyncHttpClient asyncHttpClient;
-    final String url="http://192.168.1.23:",port="3000";
+    final String url="http://192.168.1.23:",port="80";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +60,7 @@ public class Login extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Lütfen Tüm Bilgileri Doldurunuz", Toast.LENGTH_LONG).show();
                     return;
                 } else {
-                    asyncHttpClient.get("http://192.168.1.23:3000/login?username=" + username.getText().toString() + "&password=" + password.getText().toString(), new AsyncHttpResponseHandler() {
+                    asyncHttpClient.get("http://192.168.1.23:80/login?username=" + username.getText().toString() + "&password=" + password.getText().toString(), new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String response = new String(responseBody);

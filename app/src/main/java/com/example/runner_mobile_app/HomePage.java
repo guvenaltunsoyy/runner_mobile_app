@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +37,13 @@ import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 public class HomePage extends AppCompatActivity {
-
     private ProgressDialog progress;
     private RequestQueue mQueue;
     private TextView tv_run;
     private ImageView image;
-    final String urll = "http://192.168.1.23:", port = "3000";
+    private TextView tv_username;
+    public Button gonder;
+    final String urll = "http://192.168.1.23:", port = "80";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +52,18 @@ public class HomePage extends AppCompatActivity {
         mQueue = Volley.newRequestQueue(this);
         tv_run = findViewById(R.id.tv_runCount);
         image=findViewById(R.id.imageView);
+        gonder=findViewById(R.id.btnMessage);
         Intent intent = getIntent();
         final String username = intent.getStringExtra("username");
-        final TextView tv_username = findViewById(R.id.tv_username);
+        tv_username = findViewById(R.id.tv_username);
         tv_username.setText(username);
         jsonParse(username);
+        gonder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMessageActivity();
+            }
+        });
     }
 
     private void parse(String username){
@@ -142,7 +151,6 @@ public class HomePage extends AppCompatActivity {
                         try {
                             JSONArray jsonArray = response.getJSONArray("result");
                             JSONObject result = jsonArray.getJSONObject(0);
-                            String username = result.getString("username");
                             Integer runCount = result.getInt("runcount");
                             String img = result.getString("image");
                             byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
@@ -173,7 +181,10 @@ public class HomePage extends AppCompatActivity {
                             //name, surname, password,age,phoneNumber,runcount,mail,title
                             JSONArray jsonArray = response.getJSONArray("result");
                             JSONObject result = jsonArray.getJSONObject(0);
-
+                            String img = result.getString("image");
+                            byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            image.setImageBitmap(decodedByte);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -189,6 +200,11 @@ public class HomePage extends AppCompatActivity {
         mQueue.add(request);
     }
 
+    public void goToMessageActivity(){
+        Intent intent=new Intent(HomePage.this,MessageActivity.class);
+        intent.putExtra("username",tv_username.getText().toString());
+        startActivity(intent);
+    }
     public void goToList(View view) {
         Intent intent = new Intent(getApplicationContext(), ListRunner.class);
         startActivity(intent);

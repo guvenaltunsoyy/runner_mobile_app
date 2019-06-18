@@ -36,6 +36,7 @@ dependencies {
     //noinspection GradleCompatible
     implementation "com.android.support:support-compat:28.0.0"
     implementation 'com.github.nkzawa:socket.io-client:0.6.0'
+    implementation 'com.github.nkzawa:socket.io-client:0.3.0'
     implementation('io.socket:socket.io-client:0.6.2') {
         exclude group: 'org.json', module: 'json'
     }

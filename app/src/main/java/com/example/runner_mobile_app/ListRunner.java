@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,11 +21,12 @@ public class ListRunner extends AppCompatActivity {
     private TextView mTextViewResult;
     private RequestQueue mQueue;
     private ProgressDialog progress;
-    private final String URL="http://192.168.1.23:3000";
+    private final String URL="http://192.168.1.23:80";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_runner);
+
 
         mTextViewResult = findViewById(R.id.text_view_result);
         mQueue = Volley.newRequestQueue(this);
@@ -47,6 +49,8 @@ public class ListRunner extends AppCompatActivity {
                                 Integer runCount = result.getInt("runcount");
                                 String title=result.getString("title");
                                 mTextViewResult.append((i+1)+"."+ username +" : " + String.valueOf(runCount) +  "\n"+title+"\n\n");
+
+                               // Toast.makeText(getApplicationContext(), img, Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

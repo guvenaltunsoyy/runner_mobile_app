@@ -17,15 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SendMailActivity"></activity>
+        <activity android:name=".MessageActivity"></activity>
+        <activity android:name=".SendMailActivity" />
         <activity android:name=".Register" />
         <activity android:name=".ListRunner" />
         <activity android:name=".HomePage" />
-        <activity android:name=".Bildirim" />
-        <activity android:name=".List_Runner" />
         <activity
             android:name=".Login"
-            android:label="User Login">
+            android:label="Runner-Mobile-App">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
