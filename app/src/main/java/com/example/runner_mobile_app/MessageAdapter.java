@@ -19,6 +19,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +31,7 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
     public MessageAdapter(Context context, int resource, List<MessageFormat> objects) {
         super(context, resource, objects);
     }
-    private RequestQueue mQueue;
+    private RequestQueue mQueue ;
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -68,18 +69,18 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
             messageText.setVisibility(View.VISIBLE);
             usernameText.setVisibility(View.VISIBLE);
             String url = "http://192.168.1.23:80/image?username=guven";
+            mQueue = Volley.newRequestQueue(getContext());
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                //name, surname, password,age,phoneNumber,runcount,mail,title
                                 JSONArray jsonArray = response.getJSONArray("result");
                                 JSONObject result = jsonArray.getJSONObject(0);
                                 String img = result.getString("image");
                                 byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
                                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
+                                Log.i("IMAGE URL",img);
                                 image.setVisibility(View.VISIBLE);
                                 image.setImageBitmap(decodedByte);
                                 Log.i("IMAGE RESULT","fonka geldi");
