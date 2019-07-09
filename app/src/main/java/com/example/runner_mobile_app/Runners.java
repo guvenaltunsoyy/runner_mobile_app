@@ -3,12 +3,15 @@ package com.example.runner_mobile_app;
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -17,24 +20,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ListRunner extends AppCompatActivity {
-    private TextView mTextViewResult;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Runners extends AppCompatActivity {
     private RequestQueue mQueue;
     private ProgressDialog progress;
-    private final String URL="http://192.168.1.23:80";
+    private final String URL="http://192.168.42.62:80";
+    final List<Runner> users = new ArrayList<Runner>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_runner);
+        setContentView(R.layout.activity_runners);
 
 
-        mTextViewResult = findViewById(R.id.text_view_result);
         mQueue = Volley.newRequestQueue(this);
         jsonParse();
     }
 
     private void jsonParse() {
-        progress = ProgressDialog.show(ListRunner.this, "", "Lütfen Bekleyiniz", true);
+        progress = ProgressDialog.show(Runners.this, "", "Lütfen Bekleyiniz", true);
         String url = URL+"/list";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -43,14 +48,16 @@ public class ListRunner extends AppCompatActivity {
                         try {
                             //name, surname, password,age,phoneNumber,runcount,mail,title
                             JSONArray jsonArray = response.getJSONArray("result");
-                            for (int i = 0; i < 10; i++) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject result = jsonArray.getJSONObject(i);
                                 String username = result.getString("username");
                                 Integer runCount = result.getInt("runcount");
                                 String title=result.getString("title");
-                                mTextViewResult.append((i+1)+"."+ username +" : " + String.valueOf(runCount) +  "\n"+title+"\n\n");
-
-                               // Toast.makeText(getApplicationContext(), img, Toast.LENGTH_LONG).show();
+                                String img=result.getString("image");
+                                users.add(new Runner(username,runCount,img,title));
+                                final ListView listView = (ListView) findViewById(R.id.listView);
+                                CustomAdapter adapter = new CustomAdapter(Runners.this, users);
+                                listView.setAdapter(adapter);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -62,7 +69,22 @@ public class ListRunner extends AppCompatActivity {
                 error.printStackTrace();
             }
         });
+        request.setRetryPolicy(new RetryPolicy() { //volley timeout icin.
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
 
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
         mQueue.add(request);
         progress.dismiss();
     }

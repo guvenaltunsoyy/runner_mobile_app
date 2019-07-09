@@ -46,7 +46,7 @@ public class Register extends AppCompatActivity {
     private AsyncHttpClient asyncHttpClient;
     private RequestQueue mQueue;
     private byte[] byteArrayPhoto = null;
-    final String url="http://192.168.1.23:",port="3000";
+    final String url="http://192.168.42.62:",port="80";
     int n;
 
     @Override
@@ -123,7 +123,13 @@ public class Register extends AppCompatActivity {
                         String encodedPhotoStr = Base64.encodeToString(byteArrayPhoto, Base64.DEFAULT);
                         requestParams.add("imageData", encodedPhotoStr);
                     }
-                    asyncHttpClient.post(url+port+"/create", requestParams, new AsyncHttpResponseHandler() {
+                    new AccessToDb().create(url,port,requestParams);
+                        Toast.makeText(getApplicationContext(), "Kayit basarili", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                        intent.putExtra("username",username.getText().toString());
+                        startActivity(intent);
+
+                   /* asyncHttpClient.post(url+port+"/create", requestParams, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String response = new String(responseBody);
@@ -141,7 +147,7 @@ public class Register extends AppCompatActivity {
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 
                         }
-                    });
+                    });*/
                 } else {
                     //Toast.makeText(getApplicationContext(), "Yanlış Kod", Toast.LENGTH_LONG).show();
                     //tv_kod.setText("");
@@ -152,7 +158,7 @@ public class Register extends AppCompatActivity {
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ListRunner.class);
+                Intent intent = new Intent(getApplicationContext(), Runners.class);
                 startActivity(intent);
             }
         });

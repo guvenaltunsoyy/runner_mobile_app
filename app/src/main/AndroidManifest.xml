@@ -17,10 +17,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MessageActivity"></activity>
+        <activity android:name=".Runners"></activity>
+        <activity android:name=".MessageActivity" />
         <activity android:name=".SendMailActivity" />
         <activity android:name=".Register" />
-        <activity android:name=".ListRunner" />
         <activity android:name=".HomePage" />
         <activity
             android:name=".Login"

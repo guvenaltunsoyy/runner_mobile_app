@@ -50,7 +50,7 @@ public class MessageActivity extends AppCompatActivity {
     private Socket mSocket;
     {
         try {
-            mSocket = IO.socket("http://192.168.1.23:3000");
+            mSocket = IO.socket("http://192.168.42.62:3000");
         } catch (URISyntaxException e) {
             Log.i("ERROR","ERROR ***********************");
         }
@@ -63,7 +63,7 @@ public class MessageActivity extends AppCompatActivity {
             super.handleMessage(msg);
             Log.i(TAG, "handleMessage: typing stopped " + startTyping);
             if(time == 0){
-                setTitle("SocketIO");
+                setTitle("Mesajlaşma");
                 Log.i(TAG, "handleMessage: typing stopped time is " + time);
                 startTyping = false;
                 time = 2;

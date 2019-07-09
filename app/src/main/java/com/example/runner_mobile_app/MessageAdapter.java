@@ -32,6 +32,7 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
         super(context, resource, objects);
     }
     private RequestQueue mQueue ;
+    public int count=0;
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -65,10 +66,12 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
 
             TextView messageText = convertView.findViewById(R.id.message_body);
             TextView usernameText = (TextView) convertView.findViewById(R.id.name);
-           final ImageView image=convertView.findViewById(R.id.imageView);
-            messageText.setVisibility(View.VISIBLE);
             usernameText.setVisibility(View.VISIBLE);
-            String url = "http://192.168.1.23:80/image?username=guven";
+            messageText.setVisibility(View.VISIBLE);
+
+
+            final ImageView image=convertView.findViewById(R.id.imageView);
+            String url = "http://192.168.42.62:80/image?username=guven";
             mQueue = Volley.newRequestQueue(getContext());
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
@@ -80,7 +83,8 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
                                 String img = result.getString("image");
                                 byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
                                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                                Log.i("IMAGE URL",img);
+                                count++;
+                                Log.i("IMAGE URL","******** URL ******"+count);
                                 image.setVisibility(View.VISIBLE);
                                 image.setImageBitmap(decodedByte);
                                 Log.i("IMAGE RESULT","fonka geldi");

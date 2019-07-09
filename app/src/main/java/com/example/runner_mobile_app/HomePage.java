@@ -43,7 +43,7 @@ public class HomePage extends AppCompatActivity {
     private ImageView image;
     private TextView tv_username;
     public Button gonder;
-    final String urll = "http://192.168.1.23:", port = "80";
+    final String urll = "http://192.168.42.62:", port = "80";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,7 +206,7 @@ public class HomePage extends AppCompatActivity {
         startActivity(intent);
     }
     public void goToList(View view) {
-        Intent intent = new Intent(getApplicationContext(), ListRunner.class);
+        Intent intent = new Intent(getApplicationContext(), Runners.class);
         startActivity(intent);
     }
 }
