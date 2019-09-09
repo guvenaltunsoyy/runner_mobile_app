@@ -36,6 +36,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
+
+import static android.provider.Telephony.Carriers.PORT;
+
 public class HomePage extends AppCompatActivity {
     private ProgressDialog progress;
     private RequestQueue mQueue;
@@ -43,16 +46,18 @@ public class HomePage extends AppCompatActivity {
     private ImageView image;
     private TextView tv_username;
     public Button gonder;
-    final String urll = "http://192.168.42.62:", port = "80";
+    public String urll, PORT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        urll = getString(R.string.HOST);
+        PORT = getString(R.string.PORT);
         setContentView(R.layout.activity_home_page);
         mQueue = Volley.newRequestQueue(this);
         tv_run = findViewById(R.id.tv_runCount);
-        image=findViewById(R.id.imageView);
-        gonder=findViewById(R.id.btnMessage);
+        image = findViewById(R.id.imageView);
+        gonder = findViewById(R.id.btnMessage);
         Intent intent = getIntent();
         final String username = intent.getStringExtra("username");
         tv_username = findViewById(R.id.tv_username);
@@ -66,12 +71,12 @@ public class HomePage extends AppCompatActivity {
         });
     }
 
-    private void parse(String username){
+    private void parse(String username) {
 
         //    progress = ProgressDialog.show(HomaPage.this, "", "Lütfen Bekleyiniz", true);
         Log.i("log", "parse girdi");
         StringRequest jsonForGetRequest = new StringRequest(
-                Request.Method.GET, urll+port+"/runCount?username=" + username,
+                Request.Method.GET, urll + PORT + "/runCount?username=" + username,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -79,7 +84,6 @@ public class HomePage extends AppCompatActivity {
 
                         Log.i("LOG", response);
                         try {
-                            Log.i("log", "parse girdi 77");
                             JSONObject obj = new JSONObject(response);
                             JSONObject jsonBody = obj.getJSONObject("result");
                             tv_run.setText(jsonBody.getString("runcount"));
@@ -135,14 +139,14 @@ public class HomePage extends AppCompatActivity {
 
 
         };
-        jsonForGetRequest.setRetryPolicy(new DefaultRetryPolicy(10000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonForGetRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         // Login.getInstance().addToRequestQueue(jsonForGetRequest);
 
     }
 
     private void jsonParse(String username) {
         progress = ProgressDialog.show(HomePage.this, "", "Lütfen Bekleyiniz", true);
-        String url = urll+port+"/runCount?username=" + username;
+        String url = urll + PORT + "/runCount?username=" + username;
         Log.i("URL", url);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -172,7 +176,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     private void getImage(String username) {
-        String url = urll+port+"/image?username=" + username;
+        String url = urll + PORT + "/image?username=" + username;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -200,11 +204,12 @@ public class HomePage extends AppCompatActivity {
         mQueue.add(request);
     }
 
-    public void goToMessageActivity(){
-        Intent intent=new Intent(HomePage.this,MessageActivity.class);
-        intent.putExtra("username",tv_username.getText().toString());
+    public void goToMessageActivity() {
+        Intent intent = new Intent(HomePage.this, MessageActivity.class);
+        intent.putExtra("username", tv_username.getText().toString());
         startActivity(intent);
     }
+
     public void goToList(View view) {
         Intent intent = new Intent(getApplicationContext(), Runners.class);
         startActivity(intent);

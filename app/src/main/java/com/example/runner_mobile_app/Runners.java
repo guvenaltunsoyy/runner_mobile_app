@@ -26,14 +26,13 @@ import java.util.List;
 public class Runners extends AppCompatActivity {
     private RequestQueue mQueue;
     private ProgressDialog progress;
-    private final String URL="http://192.168.42.62:80";
+    private String URL;
     final List<Runner> users = new ArrayList<Runner>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_runners);
-
-
+        URL = getString(R.string.HOST) + getString(R.string.PORT);
         mQueue = Volley.newRequestQueue(this);
         jsonParse();
     }

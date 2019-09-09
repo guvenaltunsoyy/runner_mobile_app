@@ -17,7 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Runners"></activity>
+        <service
+            android:name=".UserService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".Runners" />
         <activity android:name=".MessageActivity" />
         <activity android:name=".SendMailActivity" />
         <activity android:name=".Register" />

@@ -33,7 +33,7 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
     }
     private RequestQueue mQueue ;
     public int count=0;
-
+    final String HOST = getContext().getString(R.string.HOST) + getContext().getString(R.string.PORT);
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.i(MessageActivity.TAG, "getView:");
@@ -71,7 +71,7 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
 
 
             final ImageView image=convertView.findViewById(R.id.imageView);
-            String url = "http://192.168.42.62:80/image?username=guven";
+            String url = HOST + "/image?username=guven";
             mQueue = Volley.newRequestQueue(getContext());
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
@@ -87,7 +87,6 @@ public class MessageAdapter extends ArrayAdapter<MessageFormat> {
                                 Log.i("IMAGE URL","******** URL ******"+count);
                                 image.setVisibility(View.VISIBLE);
                                 image.setImageBitmap(decodedByte);
-                                Log.i("IMAGE RESULT","fonka geldi");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

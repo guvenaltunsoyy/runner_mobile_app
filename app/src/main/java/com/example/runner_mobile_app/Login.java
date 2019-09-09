@@ -1,6 +1,7 @@
 package com.example.runner_mobile_app;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,10 +19,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import cz.msebera.android.httpclient.Header;
 
-
 public class Login extends AppCompatActivity {
     public AsyncHttpClient asyncHttpClient;
-    final String url="http://192.168.42.62:",port="80";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +33,8 @@ public class Login extends AppCompatActivity {
         final SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences sharedPref2 = this.getPreferences(Context.MODE_PRIVATE);
         boolean check =sharedPref2.getBoolean("isChecked",false);
+        final String url=getString(R.string.HOST),port=getString(R.string.PORT);
+        Log.i("URL",url+port);
         if (check){
             String name = sharedPref2.getString("username", "");
             String pass = sharedPref.getString("password", "");
@@ -60,7 +61,7 @@ public class Login extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Lütfen Tüm Bilgileri Doldurunuz", Toast.LENGTH_LONG).show();
                     return;
                 } else {
-                    asyncHttpClient.get("http://192.168.42.62:80/login?username=" + username.getText().toString() + "&password=" + password.getText().toString(), new AsyncHttpResponseHandler() {
+                    asyncHttpClient.get(url + port + "/login?username=" + username.getText().toString() + "&password=" + password.getText().toString(), new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String response = new String(responseBody);
@@ -86,8 +87,15 @@ public class Login extends AppCompatActivity {
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent state = new Intent(getApplicationContext(), Register.class);
-                startActivity(state);
+                //startService(new Intent(getApplicationContext(), UserService.class));
+                //Intent state = new Intent(getApplicationContext(), Register.class);
+                //startActivity(state);
+                Log.i("Create","create");
+                Intent i = new Intent(getApplicationContext(), UserService.class);
+                startService(i);
+
+                stopService(i);
+
 
             }
         });

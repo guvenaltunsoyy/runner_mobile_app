@@ -46,7 +46,7 @@ public class Register extends AppCompatActivity {
     private AsyncHttpClient asyncHttpClient;
     private RequestQueue mQueue;
     private byte[] byteArrayPhoto = null;
-    final String url="http://192.168.42.62:",port="80";
+    final String url=getString(R.string.HOST), port = getString(R.string.PORT);
     int n;
 
     @Override
@@ -175,7 +175,7 @@ public class Register extends AppCompatActivity {
         int n = 100000+( rand.nextInt(900000));
         final int finalN = n;
         mQueue = Volley.newRequestQueue(this);
-        String urll = url+"3000/email";
+        String urll = url + port +"/email";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, urll, null,
                 new Response.Listener<JSONObject>() {
                     @Override
