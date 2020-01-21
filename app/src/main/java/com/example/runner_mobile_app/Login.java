@@ -17,10 +17,13 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import Services.ClientServices;
 import cz.msebera.android.httpclient.Header;
 
 public class Login extends AppCompatActivity {
     public AsyncHttpClient asyncHttpClient;
+    private ClientServices _clientService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +35,11 @@ public class Login extends AppCompatActivity {
         final CheckBox beni_hatirla = findViewById(R.id.checkbox);
         final SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences sharedPref2 = this.getPreferences(Context.MODE_PRIVATE);
-        boolean check =sharedPref2.getBoolean("isChecked",false);
-        final String url=getString(R.string.HOST),port=getString(R.string.PORT);
-        Log.i("URL",url+port);
-        if (check){
+        boolean check = sharedPref2.getBoolean("isChecked", false);
+        final String _baseUrl = getString(R.string.BaseUrl);
+        _clientService = new ClientServices();
+        Log.i("URL", String.valueOf(_baseUrl));
+        if (check) {
             String name = sharedPref2.getString("username", "");
             String pass = sharedPref.getString("password", "");
             beni_hatirla.setChecked(true);
@@ -51,17 +55,18 @@ public class Login extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPref.edit(); //SharedPreferences'a kayıt eklemek için editor oluşturuyoruz
                         editor.putString("username", username.getText().toString()); //string değer ekleniyor
                         editor.putString("password", password.getText().toString());
-                        editor.putBoolean("isChecked",true);
+                        editor.putBoolean("isChecked", true);
                         editor.commit(); //Kayıt
-                    }else
-                        Toast.makeText(getApplicationContext(),"null",Toast.LENGTH_LONG).show();
+                    } else
+                        Toast.makeText(getApplicationContext(), "null", Toast.LENGTH_LONG).show();
                 }
                 asyncHttpClient = new AsyncHttpClient();
                 if (username.getText().toString() == "" || password.getText().toString() == "") {
                     Toast.makeText(getApplicationContext(), "Lütfen Tüm Bilgileri Doldurunuz", Toast.LENGTH_LONG).show();
                     return;
                 } else {
-                    asyncHttpClient.get(url + port + "/login?username=" + username.getText().toString() + "&password=" + password.getText().toString(), new AsyncHttpResponseHandler() {
+
+                    asyncHttpClient.get(_baseUrl + "/login?username=" + username.getText().toString() + "&password=" + password.getText().toString(), new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String response = new String(responseBody);
@@ -90,11 +95,9 @@ public class Login extends AppCompatActivity {
                 //startService(new Intent(getApplicationContext(), UserService.class));
                 //Intent state = new Intent(getApplicationContext(), Register.class);
                 //startActivity(state);
-                Log.i("Create","create");
-                Intent i = new Intent(getApplicationContext(), UserService.class);
-                startService(i);
-
-                stopService(i);
+                Log.i("Create", "create");
+                //_clientService.RunnerLogin(username.getText().toString(), password.getText().toString());
+                _clientService.RunnerLogin("guven","1");
 
 
             }

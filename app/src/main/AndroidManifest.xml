@@ -17,10 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <service
-            android:name=".UserService"
-            android:enabled="true"
-            android:exported="true"></service>
 
         <activity android:name=".Runners" />
         <activity android:name=".MessageActivity" />
