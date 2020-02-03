@@ -123,7 +123,7 @@ public class Register extends AppCompatActivity {
                         String encodedPhotoStr = Base64.encodeToString(byteArrayPhoto, Base64.DEFAULT);
                         requestParams.add("imageData", encodedPhotoStr);
                     }
-                    new AccessToDb().create(url,port,requestParams);
+                    //new AccessToDb().create(url,port,requestParams);
                         Toast.makeText(getApplicationContext(), "Kayit basarili", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
                         intent.putExtra("username",username.getText().toString());

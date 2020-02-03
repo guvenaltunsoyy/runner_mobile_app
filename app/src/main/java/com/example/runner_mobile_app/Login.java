@@ -2,6 +2,7 @@ package com.example.runner_mobile_app;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,12 +18,15 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import java.util.concurrent.ExecutionException;
+
 import Services.ClientServices;
 import cz.msebera.android.httpclient.Header;
 
 public class Login extends AppCompatActivity {
     public AsyncHttpClient asyncHttpClient;
     private ClientServices _clientService;
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,7 @@ public class Login extends AppCompatActivity {
         boolean check = sharedPref2.getBoolean("isChecked", false);
         final String _baseUrl = getString(R.string.BaseUrl);
         _clientService = new ClientServices();
+
         Log.i("URL", String.valueOf(_baseUrl));
         if (check) {
             String name = sharedPref2.getString("username", "");
@@ -60,36 +65,50 @@ public class Login extends AppCompatActivity {
                     } else
                         Toast.makeText(getApplicationContext(), "null", Toast.LENGTH_LONG).show();
                 }
+                String _username = sharedPref.getString("username", null);
+                String _password = sharedPref.getString("password", null);
+                if (_username != null && _password != null && username.getText().toString().equals(_username) && password.getText().toString().equals(_password)) {
+                    //progress.dismiss();
+                    Toast.makeText(getApplicationContext(), "Giris Basarili", Toast.LENGTH_LONG).show();
+                    Intent intent3 = new Intent(getApplicationContext(), HomePage.class);
+                    intent3.putExtra("username", username.getText().toString());
+                    startActivity(intent3);
+                    return;
+                }
                 asyncHttpClient = new AsyncHttpClient();
                 if (username.getText().toString() == "" || password.getText().toString() == "") {
                     Toast.makeText(getApplicationContext(), "Lütfen Tüm Bilgileri Doldurunuz", Toast.LENGTH_LONG).show();
                     return;
                 } else {
-
+                    progress = ProgressDialog.show(Login.this, "Giriş Yapılıyor", "Lütfen Bekleyiniz", true);
                     asyncHttpClient.get(_baseUrl + "/login?username=" + username.getText().toString() + "&password=" + password.getText().toString(), new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             String response = new String(responseBody);
                             Log.i("RESPINFO", response);
                             if (response.contains("\"auth\": true")) {
+                                progress.dismiss();
                                 Toast.makeText(getApplicationContext(), "giris basarili", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getApplicationContext(), HomePage.class);
                                 intent.putExtra("username", username.getText().toString());
                                 startActivity(intent);
                             } else {
+                                progress.dismiss();
                                 Toast.makeText(getApplicationContext(), "giris basarisiz", Toast.LENGTH_LONG).show();
                             }
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            progress.dismiss();
+                            Toast.makeText(getApplicationContext(), "UnknowErrorWhenLogin", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
             }
         });
 
-        btnCreate.setOnClickListener(new View.OnClickListener() {
+       /* btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //startService(new Intent(getApplicationContext(), UserService.class));
@@ -97,11 +116,18 @@ public class Login extends AppCompatActivity {
                 //startActivity(state);
                 Log.i("Create", "create");
                 //_clientService.RunnerLogin(username.getText().toString(), password.getText().toString());
+                _clientService = new ClientServices();
                 _clientService.RunnerLogin("guven","1");
 
 
             }
-        });
+        });*/
+
+    }
+
+    public void Login(View view) throws ExecutionException, InterruptedException {
+        Log.i("LOGIN", "CREATE BUTTON");
+        _clientService.RunnerLogin("guven", "1");
     }
 
 

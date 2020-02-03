@@ -26,20 +26,20 @@ import java.util.List;
 public class Runners extends AppCompatActivity {
     private RequestQueue mQueue;
     private ProgressDialog progress;
-    private String URL;
+    private String _baseUrl;
     final List<Runner> users = new ArrayList<Runner>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_runners);
-        URL = getString(R.string.HOST) + getString(R.string.PORT);
         mQueue = Volley.newRequestQueue(this);
+         _baseUrl = getString(R.string.BaseUrl);
         jsonParse();
     }
 
     private void jsonParse() {
         progress = ProgressDialog.show(Runners.this, "", "Lütfen Bekleyiniz", true);
-        String url = URL+"/list";
+        String url = _baseUrl+"list";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override

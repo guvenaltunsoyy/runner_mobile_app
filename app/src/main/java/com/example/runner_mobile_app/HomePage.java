@@ -1,5 +1,7 @@
 package com.example.runner_mobile_app;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,15 +49,16 @@ public class HomePage extends AppCompatActivity {
     private ImageView image;
     private TextView tv_username;
     public Button gonder;
-    public String urll, PORT;
+    private SharedPreferences sharedPreferences;
+    private Runner runner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        urll = getString(R.string.HOST);
-        PORT = getString(R.string.PORT);
         setContentView(R.layout.activity_home_page);
         mQueue = Volley.newRequestQueue(this);
+        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        runner = new Runner();
         tv_run = findViewById(R.id.tv_runCount);
         image = findViewById(R.id.imageView);
         gonder = findViewById(R.id.btnMessage);
@@ -62,7 +66,11 @@ public class HomePage extends AppCompatActivity {
         final String username = intent.getStringExtra("username");
         tv_username = findViewById(R.id.tv_username);
         tv_username.setText(username);
-        jsonParse(username);
+        final String _baseUrl = getString(R.string.BaseUrl);
+        Log.i("HOMEPAGE URL : ", _baseUrl);
+        progress = ProgressDialog.show(HomePage.this, "", "Lütfen Bekleyiniz", true);
+        //if(!CheckRunner())
+            getUser(username, _baseUrl);
         gonder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,12 +84,11 @@ public class HomePage extends AppCompatActivity {
         //    progress = ProgressDialog.show(HomaPage.this, "", "Lütfen Bekleyiniz", true);
         Log.i("log", "parse girdi");
         StringRequest jsonForGetRequest = new StringRequest(
-                Request.Method.GET, urll + PORT + "/runCount?username=" + username,
+                Request.Method.POST, "" + "runCount?username=" + username,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         progress.dismiss();
-
                         Log.i("LOG", response);
                         try {
                             JSONObject obj = new JSONObject(response);
@@ -144,11 +151,39 @@ public class HomePage extends AppCompatActivity {
 
     }
 
-    private void jsonParse(String username) {
-        progress = ProgressDialog.show(HomePage.this, "", "Lütfen Bekleyiniz", true);
-        String url = urll + PORT + "/runCount?username=" + username;
+    private boolean CheckRunner() {
+        if (sharedPreferences.getString("username", null) != null) {
+            runner.setUsername(sharedPreferences.getString("username", null));
+            runner.setName(sharedPreferences.getString("name", null));
+            runner.setMail(sharedPreferences.getString("mail", null));
+            runner.setPhonenumber(sharedPreferences.getString("phonenumber", null));
+            runner.setTitle(sharedPreferences.getString("title", null));
+            runner.setImage(sharedPreferences.getString("image", null));
+            runner.setId(sharedPreferences.getInt("id", 0));
+            runner.setRuncount(sharedPreferences.getInt("runcount", 0));
+            runner.setAge(sharedPreferences.getInt("age", 0));
+
+            //update UI
+            byte[] decodedString = Base64.decode(runner.getImage(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            image.setImageBitmap(decodedByte);
+            tv_run.setText(String.valueOf(runner.getRuncount()));
+            Log.i("MEMORY ", "Runner memory'den alındı.");
+            progress.dismiss();
+            return true;
+        }
+
+        progress.dismiss();
+        return false;
+    }
+
+    private void getUser(final String username, String _baseUrl) {
+        String url = _baseUrl + "getUser";
         Log.i("URL", url);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+        Map<String ,String> params = new HashMap<String,String>();
+        params.put("username", username);
+        JSONObject jsonParams = new JSONObject(params);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonParams,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -157,10 +192,25 @@ public class HomePage extends AppCompatActivity {
                             JSONObject result = jsonArray.getJSONObject(0);
                             Integer runCount = result.getInt("runcount");
                             String img = result.getString("image");
+
                             byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
                             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                             image.setImageBitmap(decodedByte);
+
                             tv_run.setText(String.valueOf(runCount));
+
+                            // save to memory
+                            SharedPreferences.Editor editor = sharedPreferences.edit(); //SharedPreferences'a kayıt eklemek için editor oluşturuyoruz
+                            editor.putString("username", username); //string değer ekleniyor
+                            editor.putString("name", result.getString("name"));
+                            editor.putInt("age", result.getInt("age"));
+                            editor.putInt("id", result.getInt("id"));
+                            editor.putString("phonenumber", result.getString("phonenumber"));
+                            editor.putString("mail", result.getString("mail"));
+                            editor.putInt("runcount", result.getInt("runcount"));
+                            editor.putString("title", result.getString("title"));
+                            editor.putString("image", result.getString("image"));
+                            editor.commit(); //Kayıt
                             progress.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -175,9 +225,9 @@ public class HomePage extends AppCompatActivity {
         mQueue.add(request);
     }
 
-    private void getImage(String username) {
-        String url = urll + PORT + "/image?username=" + username;
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+    private void getImage(String username, String _baseUrl) {
+        String url = _baseUrl + "image?username=" + username;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
